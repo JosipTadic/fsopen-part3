@@ -52,6 +52,15 @@ app.delete("/api/person/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
+  if (!req.body.name || !req.body.number) {
+    res.status(404).end();
+    return;
+  }
+
+  if (persons.find((person) => req.body.name === person.name)) {
+    throw new Error("name must be unique");
+  }
+
   const body = req.body;
 
   const person = {
