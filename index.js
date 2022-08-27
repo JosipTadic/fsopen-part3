@@ -27,8 +27,26 @@ let persons = [
   },
 ];
 
-const logger = morgan("tiny");
-app.use(logger);
+app.use(
+  morgan("tiny", {
+    skip: function (req, res) {
+      return req.method === "POST";
+    },
+  })
+);
+
+morgan.token("body", (req, res) => req.body && JSON.stringify(req.body));
+
+app.use(
+  morgan(
+    ":method :url :status :response-time ms - :res[content-lenght] :body - :req[content-lenght]",
+    {
+      skip: function (req, res) {
+        return req.method !== "POST";
+      },
+    }
+  )
+);
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
