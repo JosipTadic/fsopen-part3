@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+const morgan = require("morgan");
+
 let persons = [
   {
     id: 1,
@@ -24,6 +26,9 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
+
+const logger = morgan("tiny");
+app.use(logger);
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
