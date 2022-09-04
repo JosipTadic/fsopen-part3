@@ -3,6 +3,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 const app = express();
+app.use(express.static("build"));
 app.use(express.json());
 app.use(cors());
 
@@ -62,14 +63,14 @@ app.get("/info", (req, res) => {
   );
 });
 
-app.get("/api/person/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   const person = persons.find((person) => person.id === id);
 
   person ? res.json(person) : res.status(404).end();
 });
 
-app.delete("/api/person/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
   persons = persons.filter((person) => person.id !== id);
 
