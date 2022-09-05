@@ -1,11 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+require("dotenv").config();
 
 const app = express();
 app.use(express.static("build"));
 app.use(express.json());
 app.use(cors());
+
+const Person = require("./models/person");
 
 let persons = [
   {
@@ -52,7 +55,9 @@ app.use(
 );
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then((persons) => {
+    res.json(persons);
+  });
 });
 
 app.get("/info", (req, res) => {
@@ -61,13 +66,6 @@ app.get("/info", (req, res) => {
   res.send(
     `<p>Phonebook has info for ${personsLenght} people</p><p>${currentTime.toString()}</p>`
   );
-});
-
-app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  person ? res.json(person) : res.status(404).end();
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -105,7 +103,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
