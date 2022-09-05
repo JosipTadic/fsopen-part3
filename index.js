@@ -75,26 +75,28 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
-app.post("/api/persons", (req, res) => {
-  if (!req.body.name || !req.body.number) {
-    res.status(404).end();
-    return;
+app.post("/api/persons", (request, response) => {
+  console.log(response);
+  const body = request.body;
+
+  if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
+
+  /*
   if (persons.find((person) => req.body.name === person.name)) {
     throw new Error("name must be unique");
   }
-
-  const body = req.body;
-
-  const person = {
-    id: Math.floor(Math.random() * 10000),
-    name: body.name,
-    number: body.number,
-  };
-
-  persons = persons.concat(person);
-  res.json(person);
+  */
 });
 
 const unknownEndpoint = (request, response) => {
