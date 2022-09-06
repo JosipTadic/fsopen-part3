@@ -39,7 +39,7 @@ app.use(
   )
 );
 
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (req, res, next) => {
   Person.find({})
     .then((persons) => {
       res.json(persons);
@@ -55,7 +55,7 @@ app.get("/info", (req, res) => {
   );
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -63,7 +63,7 @@ app.delete("/api/persons/:id", (request, response) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   console.log(response);
   const body = request.body;
 
@@ -88,6 +88,25 @@ app.post("/api/persons", (request, response) => {
     throw new Error("name must be unique");
   }
   */
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { $set: { number: person.number } },
+    { new: true }
+  )
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (request, response) => {
