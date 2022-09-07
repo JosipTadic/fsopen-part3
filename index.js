@@ -47,12 +47,19 @@ app.get("/api/persons", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (req, res) => {
+app.get("/info", (request, response) => {
   const currentTime = new Date();
-  const personsLenght = persons.length;
-  res.send(
-    `<p>Phonebook has info for ${personsLenght} people</p><p>${currentTime.toString()}</p>`
-  );
+  Person.count({}, function (err, count) {
+    response.send(
+      `<p>Phonebook has info for ${count} people</p><p>${currentTime.toString()}</p>`
+    );
+  });
+});
+
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => response.json(person))
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -82,12 +89,6 @@ app.post("/api/persons", (request, response, next) => {
       response.json(savedPerson);
     })
     .catch((error) => next(error));
-
-  /*
-  if (persons.find((person) => req.body.name === person.name)) {
-    throw new Error("name must be unique");
-  }
-  */
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
