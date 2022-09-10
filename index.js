@@ -83,9 +83,14 @@ app.post("/api/persons", (request, response, next) => {
       if (result) {
         throw new Error("SameName");
       } else {
-        person.save().then((savedPerson) => {
-          response.json(savedPerson);
-        });
+        person
+          .save()
+          .then((savedPerson) => {
+            response.json(savedPerson);
+          })
+          .catch((error) => {
+            next(error);
+          });
       }
     })
     .catch((error) => {
