@@ -78,12 +78,19 @@ app.post("/api/persons", (request, response, next) => {
     number: body.number,
   });
 
-  person
-    .save()
-    .then((savedPerson) => {
-      response.json(savedPerson);
+  Person.findOne({ name: person.name })
+    .then((result) => {
+      if (result) {
+        throw new Error("SameName");
+      } else {
+        person.save().then((savedPerson) => {
+          response.json(savedPerson);
+        });
+      }
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      next(error);
+    });
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
@@ -118,6 +125,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
     return response.status(400).json({ error: error.message });
+  } else if (error.message === "SameName") {
+    return response.status(400).json({ error: "Can't POST same names" });
   }
 
   next(error);
