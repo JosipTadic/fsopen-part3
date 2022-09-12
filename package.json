@@ -10,7 +10,8 @@
     "build:ui": "rm -rf build && cd ../fsopen2022/ && npm run build && cp -r build ../fsopen2022-node",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint": "eslint ."
   },
   "author": "Josip",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^8.23.1",
     "nodemon": "^2.0.19"
   }
 }
